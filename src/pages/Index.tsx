@@ -2,14 +2,26 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import AnimatedHeroText from "@/components/AnimatedHeroText";
 import Navbar from "@/components/Navbar";
-import MediaUpload from "@/components/MediaUpload";
-import PlatformSelector from "@/components/PlatformSelector";
+import ContentGenerator from "@/components/ContentGenerator";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
-import { Sparkles, Zap, TrendingUp, Gift } from "lucide-react";
+import { Sparkles, TrendingUp, Gift } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleTryFree = () => {
+    if (user) {
+      document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/auth");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -25,7 +37,7 @@ const Index = () => {
                 hashtags, and explanations that drive engagement.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6">
+                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6" onClick={handleTryFree}>
                   <Sparkles className="mr-2" />
                   Try Free
                 </Button>
@@ -58,44 +70,7 @@ const Index = () => {
           </div>
           
           <div className="space-y-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                  1
-                </div>
-                <h3 className="text-xl font-semibold">Upload Your Media</h3>
-              </div>
-              <MediaUpload />
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                  2
-                </div>
-                <h3 className="text-xl font-semibold">Choose Your Platform</h3>
-              </div>
-              <PlatformSelector />
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                  3
-                </div>
-                <h3 className="text-xl font-semibold">Generate & Copy</h3>
-              </div>
-              <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-dashed border-primary/30">
-                <div className="text-center space-y-4">
-                  <Zap className="w-12 h-12 text-primary mx-auto" />
-                  <p className="text-lg font-semibold">AI will generate your content instantly!</p>
-                  <p className="text-muted-foreground">Get professional titles, engaging captions with CTAs, and trending hashtags</p>
-                  <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                    Generate Content (2 Credits)
-                  </Button>
-                </div>
-              </Card>
-            </div>
+            <ContentGenerator />
           </div>
         </div>
       </section>

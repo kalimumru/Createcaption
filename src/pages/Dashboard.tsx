@@ -1,11 +1,82 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Coins, TrendingUp, Gift, Clock, Image, Video } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [subscription, setSubscription] = useState<any>(null);
+  const [referralCode, setReferralCode] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
+    fetchData();
+  }, [user, navigate]);
+
+  const fetchData = async () => {
+    try {
+      // Fetch subscription
+      const { data: subData, error: subError } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user?.id)
+        .single();
+
+      if (subError) throw subError;
+      setSubscription(subData);
+
+      // Fetch referral code
+      const { data: refData, error: refError } = await supabase
+        .from("referral_codes")
+        .select("code")
+        .eq("user_id", user?.id)
+        .single();
+
+      if (refError) throw refError;
+      setReferralCode(refData.code);
+    } catch (error: any) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyReferralCode = () => {
+    navigator.clipboard.writeText(referralCode);
+    setCopied(true);
+    toast.success("Referral code copied!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const availableCredits = subscription ? subscription.credits_limit - subscription.credits_used : 0;
+  const progressPercentage = subscription ? (availableCredits / subscription.credits_limit) * 100 : 0;
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -27,15 +98,17 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold">Available Credits</h3>
-                    <p className="text-2xl font-bold text-primary">150</p>
+                    <p className="text-2xl font-bold text-primary">{availableCredits}</p>
                   </div>
                 </div>
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                   Buy Credits
                 </Button>
               </div>
-              <Progress value={75} className="h-3" />
-              <p className="text-sm text-muted-foreground mt-2">150 of 200 credits remaining</p>
+              <Progress value={progressPercentage} className="h-3" />
+              <p className="text-sm text-muted-foreground mt-2">
+                {availableCredits} of {subscription?.credits_limit} credits remaining
+              </p>
             </Card>
 
             {/* Plan Card */}
@@ -46,10 +119,10 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold">Current Plan</h3>
-                  <p className="text-xl font-bold">Basic</p>
+                  <p className="text-xl font-bold capitalize">{subscription?.plan}</p>
                 </div>
               </div>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>
                 Upgrade Plan
               </Button>
             </Card>
@@ -67,9 +140,11 @@ const Dashboard = () => {
                   <p className="text-muted-foreground">Get +10 credits for each friend who signs up!</p>
                   <div className="flex items-center gap-2 mt-2">
                     <code className="px-3 py-1 bg-background rounded border text-sm">
-                      CREATE2025XYZ
+                      {referralCode}
                     </code>
-                    <Button variant="ghost" size="sm">Copy</Button>
+                    <Button variant="ghost" size="sm" onClick={copyReferralCode}>
+                      {copied ? "Copied!" : "Copy"}
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -79,39 +154,37 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          {/* Usage History */}
+          {/* Usage Guide */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
-            <div className="grid gap-4">
-              {[1, 2, 3].map((item) => (
-                <Card key={item} className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center">
-                        {item % 2 === 0 ? (
-                          <Video className="w-8 h-8 text-muted-foreground" />
-                        ) : (
-                          <Image className="w-8 h-8 text-muted-foreground" />
-                        )}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold">Instagram Content</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Generated for Instagram • {item % 2 === 0 ? "5" : "2"} credits used
-                        </p>
-                      </div>
+            <h2 className="text-2xl font-bold mb-4">Start Creating Content</h2>
+            <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold mb-2">Ready to generate amazing content?</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Upload your images or videos, select your platform, and let AI create professional captions, 
+                    titles, and hashtags in seconds.
+                  </p>
+                  <div className="flex gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Image className="w-4 h-4 text-primary" />
+                      <span>2 credits per image</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        <span>2h ago</span>
-                      </div>
-                      <Button variant="outline" size="sm">View</Button>
+                    <div className="flex items-center gap-2">
+                      <Video className="w-4 h-4 text-primary" />
+                      <span>5 credits per video</span>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
+                </div>
+                <Button 
+                  size="lg" 
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={() => navigate("/")}
+                >
+                  Start Creating
+                </Button>
+              </div>
+            </Card>
           </div>
 
           {/* Credit Packs */}
