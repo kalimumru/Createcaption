@@ -9,21 +9,21 @@ import { Sparkles, TrendingUp, Gift } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-
 const Index = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-
   const handleTryFree = () => {
     if (user) {
-      document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("how-it-works")?.scrollIntoView({
+        behavior: "smooth"
+      });
     } else {
       navigate("/auth");
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Navbar />
       
       {/* Hero Section */}
@@ -41,19 +41,13 @@ const Index = () => {
                   <Sparkles className="mr-2" />
                   Try Free
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-                  Watch Demo
-                </Button>
+                
               </div>
             </div>
             
             <div className="relative animate-fade-in">
               <div className="relative z-10">
-                <img 
-                  src={heroImage} 
-                  alt="Social Media Content Creator" 
-                  className="rounded-2xl shadow-2xl w-full animate-float"
-                />
+                <img src={heroImage} alt="Social Media Content Creator" className="rounded-2xl shadow-2xl w-full animate-float" />
               </div>
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 blur-3xl -z-10"></div>
             </div>
@@ -84,46 +78,9 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
-            <PricingCard
-              name="Free"
-              price="₹0"
-              credits="20 Credits/Month"
-              features={[
-                "Image uploads only",
-                "Basic features",
-                "Ads included",
-                "Community support",
-                "Single platform selection"
-              ]}
-            />
-            <PricingCard
-              name="Basic"
-              price="₹149"
-              credits="200 Credits/Month"
-              features={[
-                "Image & Video uploads",
-                "All features",
-                "Ads included",
-                "Priority support",
-                "Single platform selection",
-                "Advanced AI models"
-              ]}
-              popular
-            />
-            <PricingCard
-              name="Pro"
-              price="₹499"
-              credits="400 Credits/Month"
-              features={[
-                "Image & Video uploads",
-                "All premium features",
-                "Ad-free experience",
-                "Premium support",
-                "Select 2 platforms",
-                "Advanced AI models",
-                "Priority processing"
-              ]}
-            />
+            <PricingCard name="Free" price="₹0" credits="20 Credits/Month" features={["Image uploads only", "Basic features", "Ads included", "Community support", "Single platform selection"]} />
+            <PricingCard name="Basic" price="₹149" credits="200 Credits/Month" features={["Image & Video uploads", "All features", "Ads included", "Priority support", "Single platform selection", "Advanced AI models"]} popular />
+            <PricingCard name="Pro" price="₹499" credits="400 Credits/Month" features={["Image & Video uploads", "All premium features", "Ad-free experience", "Premium support", "Select 2 platforms", "Advanced AI models", "Priority processing"]} />
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -200,28 +157,16 @@ const Index = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Name</label>
-                  <input 
-                    type="text" 
-                    className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Your name"
-                  />
+                  <input type="text" className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Your name" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Email</label>
-                  <input 
-                    type="email" 
-                    className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="your@email.com"
-                  />
+                  <input type="email" className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary" placeholder="your@email.com" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Message</label>
-                <textarea 
-                  rows={5}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                  placeholder="Tell us how we can help..."
-                />
+                <textarea rows={5} className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none" placeholder="Tell us how we can help..." />
               </div>
               <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" size="lg">
                 Send Message
@@ -232,8 +177,6 @@ const Index = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
