@@ -122,7 +122,7 @@ const Dashboard = () => {
                   <p className="text-xl font-bold capitalize">{subscription?.plan}</p>
                 </div>
               </div>
-              <Button variant="outline" className="w-full" onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button variant="outline" className="w-full" onClick={() => navigate("/#pricing")}>
                 Upgrade Plan
               </Button>
             </Card>
