@@ -101,7 +101,12 @@ const Dashboard = () => {
                     <p className="text-2xl font-bold text-primary">{availableCredits}</p>
                   </div>
                 </div>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button 
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={() => {
+                    document.getElementById('credit-packs')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
                   Buy Credits
                 </Button>
               </div>
@@ -148,7 +153,22 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap">
+               <Button 
+                className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap"
+                onClick={() => {
+                  const shareUrl = `${window.location.origin}/auth?ref=${referralCode}`;
+                  if (navigator.share) {
+                    navigator.share({
+                      title: 'Join CreateCaption',
+                      text: `Use my referral code ${referralCode} and get bonus credits!`,
+                      url: shareUrl,
+                    });
+                  } else {
+                    navigator.clipboard.writeText(shareUrl);
+                    toast.success('Referral link copied to clipboard!');
+                  }
+                }}
+              >
                 Share Referral
               </Button>
             </div>
@@ -188,7 +208,7 @@ const Dashboard = () => {
           </div>
 
           {/* Credit Packs */}
-          <div>
+          <div id="credit-packs">
             <h2 className="text-2xl font-bold mb-4">Buy Extra Credits</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {[
@@ -212,6 +232,10 @@ const Dashboard = () => {
                   <Button 
                     className={`w-full ${pack.popular ? "bg-primary hover:bg-primary/90" : ""}`}
                     variant={pack.popular ? "default" : "outline"}
+                    onClick={() => {
+                      toast.info('Payment integration coming soon! Razorpay will be integrated shortly.');
+                      // TODO: Implement Razorpay payment
+                    }}
                   >
                     Purchase
                   </Button>
